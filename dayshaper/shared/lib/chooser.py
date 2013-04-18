@@ -11,6 +11,13 @@ from dayshaper.shared.lib    import activities, utils
 def choose_next_task():
     """ Calculate the next task to work on.
 
+        Starting at the top of the tree, we choose the top-level task to work
+        on, based on the desired activity weighting and how long it has been
+        since we last worked on each of these tasks.  If the selected task has
+        children, we then repeat the process for the child task, and so on
+        until we reach a task with no children, which is the task to work on
+        next.
+
         Upon completion, we return the Task object to work on next, or None if
         there are no task objects.
     """
@@ -42,45 +49,40 @@ def _calc_next_task_for_parent(parent):
     for task in Task.objects.filter(parent=parent):
         tasks.append({'task' : task})
 
-    # Calculate the amount of time spent on each of these activities since
-    # midnight.
+    # Calculate the latest activity for each task.
 
-    start_time = utils.start_of_day()
-    end_time   = utils.current_datetime()
+    for task in tasks:
+        task['latest_activity'] = activities.latest_activity(task['task'])
+
+    # If any of these tasks has never been worked on, choose the first one.
+
+    for task in tasks:
+        if task['latest_activity'] == None:
+            return task['task']
+
+    # If we get here, every task has been worked on at least once.  Choose the
+    # date of the oldest task as our starting point.
+
+    start_time = None
+    for task in tasks:
+        if start_time == None or start_time > task['latest_activity']:
+            start_time = task['latest_activity']
+
+    end_time = utils.current_datetime()
+
+    # Calculate the amount of time spent on each of these activities since
+    # the oldest task.
 
     for task in tasks:
         task['time_spent'] = activities.time_spent_on_task(task['task'],
                                                            start_time,
                                                            end_time)
 
-    # Calculate the total amount of time spent on all tasks thus far today.
+    # Calculate the total amount of time spent on all tasks thus far.
 
     tot_time_spent = 0
     for task in tasks:
         tot_time_spent = tot_time_spent + task['time_spent']
-
-    # If we haven't done any work on any of the tasks, choose the task that
-    # hasn't been worked on for the longest.
-
-    if tot_time_spent == 0:
-        oldest_task = None
-        oldest_date = None
-        for task in tasks:
-            date = activities.latest_activity(task['task'])
-            is_oldest = False
-            if oldest_task == None:
-                is_oldest = True
-            elif date == None and oldest_date != None:
-                # Task never done -> it's the oldest.
-                is_oldest = True
-            elif date != None and oldest_date != None and date < oldest_date:
-                # Both tasks have been done before, but this one was done
-                # earlier -> it's the oldest.
-                is_oldest = True
-            if is_oldest:
-                oldest_task = task['task']
-                oldest_date = date
-        return oldest_task
 
     # Calculate the relative amount of time spent on each task, and store this
     # as a number in the range 0..1.
@@ -127,16 +129,16 @@ def _calc_next_task_for_parent(parent):
 
     # Testing:
 
-    print
-    print "Choosing a task:"
-    print
-    for task in tasks:
-        print "  " + task['task'].label + ":"
-        print "    time_spent = ", task['time_spent']
-        print "    relative_time_spent = ", task['relative_time_spent']
-        print "    desired_relative_time_spent = ", task['desired_relative_time_spent']
-        print "    discrepency = ", task['discrepency']
-        print
+#    print
+#    print "Choosing a task:"
+#    print
+#    for task in tasks:
+#        print "  " + task['task'].label + ":"
+#        print "    time_spent = ", task['time_spent']
+#        print "    relative_time_spent = ", task['relative_time_spent']
+#        print "    desired_relative_time_spent = ", task['desired_relative_time_spent']
+#        print "    discrepency = ", task['discrepency']
+#        print
 
     # Return the task back to the caller.
 
