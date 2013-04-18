@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Dayshaper</title>
+    <link href="{{ STATIC_URL }}css/editor.css"
+          rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <p/>
+    <div style="margin-left: 30px">
+      <h3>Dayshaper: Doing</h3>
+{% if task_table %}
+      So far today, you have worked on the following:
+      <p/>
+      <table style="margin-left: 20px"
+             border="0" cellspacing="0" cellpadding="5">
+  {% for row in task_table %}
+        <tr>
+          <td>
+            {{ row.prefix|safe }}{{ row.task.label }}
+          </td>
+          <td>&nbsp;&nbsp;&nbsp;</td>
+          <td>{{ row.time_spent }}</td>
+        </tr>
+  {% endfor %}
+      </table>
+      <p/>
+      That's a total of {{ total_time }} of productive work.
+      &nbsp;&nbsp;
+      Well done!
+{% else %}
+      You haven't done any work yet today.
+{% endif %}
+      <p/>
+      I suggest that you now spend 
+{% if suggested_task.min_time == 1 %}
+      1 minute
+{% else %}
+      {{ suggested_task.min_time }} minutes
+{% endif %}
+      working on <b>{{ suggested_task.label }}</b>
+{% if suggested_task.description %}&nbsp;({{ suggested_task.description }}).
+{% else %}.{% endif %}
+      <p/>
+      &nbsp;&nbsp;
+      <button onclick="document.location='{{ start_url }}'">
+        Start
+      </button>
+      &nbsp;&nbsp;
+      <button onclick="document.location='{{ finished_url }}'">
+        Finished
+      </button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+/* This file contains the various CSS styles used by editing pages. */
+
+/* Table row colours. */
+
+tr.odd {
+  background: #eee;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+tr.even {
+  background: #eef;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Generic heading and body styles for a table. */
+
+td.heading {
+  text-align: center;
+  vertical-align: middle;
+  font-size: smaller;
+  font-weight: bold;
+}
+
+td.body {
+  text-align: center;
+  vertical-align: middle;
+  font-size: smaller;
+}
+
+td.left {
+    text-align: left;
+}
+
+td.right {
+    text-align: right;
+}
+
+td.centre {
+    text-align: center;
+}
+
+/* Various combinations of table cell borders. */
+
+td.border-l {
+  border-left: 1px solid black;
+}
+
+td.border-t {
+  border-top: 1px solid black;
+}
+
+td.border-r {
+  border-right: 1px solid black;
+}
+
+td.border-b {
+  border-bottom: 1px solid black;
+}
+
+td.border-lt {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+}
+
+td.border-lr {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+td.border-lb {
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-tr {
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+
+td.border-tb {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-rb {
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-ltr {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+
+td.border-ltb {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-lrb {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-rtb {
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td.border-ltrb {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+

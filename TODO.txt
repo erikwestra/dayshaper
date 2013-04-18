@@ -1,0 +1,32 @@
+Things to Do on Dayshaper
+-------------------------
+
+ - Add support for disabling a task for a given period of time.
+ - Implement "Reflect" mode.
+ - Add JQuery to static assets.
+ - Add timer to "doing" page.
+ - Fix chooser so it handles slower-than-daily tasks.
+ - Refactor views so each view function has just one view.
+ - Allow me to add a "note" to the task when I'm finishing it, to remind myself
+   of something to do next time.
+ - In the various summaries, show how often each task was done ("once",
+   "twice", "3 times", etc), as well as the total amount of time spent on that
+   task.
+
+Completed:
+----------
+
+ + Add "minutes" to the min/max times on the "Doing" page.
+ + Rename heading on "Doing" page.
+
+###########
+
+Reflect mode should list the various tasks we've done, on a daily basis.
+Ideally, it would show all the tasks over the past week, with the total amount
+of time spent on each task over the week, and then a daily breakdown going from
+most recent back in time.
+
+How about the current week?  I'd like to be able to go from the start of the
+week.
+
+

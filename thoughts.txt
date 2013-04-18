@@ -1,0 +1,187 @@
+Dayshaper
+---------
+
+I have an idea for an interesting time-management system.  I don't want to
+spend too much time implementing it, but I'd like to explore the idea.  Maybe I
+could write a CLI-based program in Python to see if it works?
+
+The basic idea is to identify what to do next.  This is similar to the logic I
+used for the Tweet Grabber, where I wanted to cycle through keyword searches --
+except this time I'm cycling through tasks.
+
+Let's start with a "tree" of "nodes".  This tree can have multiple top-level
+nodes.  Each node has a "label" and a "weighting", where the weighting is a
+floating-point number.
+
+The goal is to spend the *right* amount of time working on the *right* tasks.
+
+Let's start with the top-level nodes in the tree.  Taking the top-level nodes
+by themselves, we calculate the relative weighting of each node, to yield a
+percentage of the day we want to spend on each node, like this:
+
+    "3taps"  = 40%
+    "book"   = 40%
+    "chores" = 20%
+
+Using an algorithm like the one I used for the tweet grabber, I can select the
+node to do next based on the relative weighting and how long it's been since
+the node was last worked on (it's "age").
+
+Now, if a node has children, we don't work on the node directly.  Instead, we
+recursively apply the same logic to the child nodes to decide which of those
+children to work on.  We keep drilling down until we reach a leaf node, which
+is the task we actually work on.
+
+When working on a leaf node, we have a "minimum amount of time to work on this"
+which we want the user to follow.  The user can work for longer if he/she wants
+-- this is just the suggested minimum.  Similarly, there's a "maximum amount of
+time to work on this" -- which is enforced by an alarm.
+
+The user can stop working at any time, but doesn't get the credit for working
+on that task if he/she doesn't do the right thing.  The user can also choose to
+work on something else instead, overriding the task-selection logic.
+
+##################
+
+That's the basic logic, although we have some exceptions which can be applied:
+
+ 1. For each task, you can link to another task to be done immediately after
+    this one.  Eg, "after working on 3taps, you get 10 minutes to play games".
+
+ 2. Tasks can have dates and times associated with them, eg, "always do this at
+    12:00 o'clock every day".  This handles appointments and routines.
+
+##################
+
+Interesting.  Could I simulate this by writing down the tree (eg, in a
+spreadsheet or VIM document) and working out the logic manually?
+
+##################
+
+Each task has a "minimum time to spend on this task" and "maximum time to spend
+on this task".  It also has a "weighting" compared with the other tasks at the
+same level in the tree.  These weightings 
+
+I could have items like individual stretches listed under a "stretching" group.
+
+##################
+
+So far so good.  How would I actually go about storing the tasks?  How about
+a very simple text file?  I want the data structure to be robust and
+expandable, but also very simple.  Some sort of dictionary structure?
+
+Think about the internal data structure.
+
+class Task(object):
+    """ A task in the Dayshaper system.
+    """
+    def __init__(self):
+        """ Standard initialiser.
+        """
+        self._label     = None
+        self._weighting = None
+        self._min_time  = None
+        self._max_time  = None
+        self._schedule  = None
+
+
+    def load(self, from_dict):
+        """ Load the task's contents from the given dictionary.
+        """
+        self._label     = from_dict.get("label",     None)
+        self._weighting = from_dict.get("weighting", None)
+        self._min_time  = from_dict.get("min_time",  None)
+        self._max_time  = from_dict.get("max_time",  None)
+        self._schedule  = from_dict.get("schedule",  None)
+
+
+    def save(self, to_dict):
+        """ Save the task's contents to the given dictionary.
+        """
+
+NO!!!   Make it a Django application.  Very simple.
+
+#################
+
+Okay, so we have a basic Django application.  What will the top-most page look
+like?
+
+Very simple:
+
+    Welcome to Dayshaper
+
+        Plan your day      Live your day
+
+That's all (for now).
+
+So now we have two new views to deal with: "/plan" for planning mode and
+"/live" for living mode.
+
+##################
+
+I now have a first cut at the "plan" mode implemented.  We can set up a
+hierarchy of tasks, and enter a label, weighting and min/max times for each
+task.  That's good for letting me set up the world the way I want it.
+
+I do think I'd want to be able to order the tasks in the list by hand.  It's a
+bit constraining to have them ordered alphabetically.
+
+But never mind...with this, what can I do with the "live" mode?
+
+I've set up an "Activity" object in the database.  This keeps track of the
+activity done on each task (including parent tasks).  I've created some utility
+functions (in /shared/lib/activities) for handling activities:
+
+  record_activity(task, started_at, ended_at)
+  time_spent_on_task(task, from_time, to_time)
+
+The time_spent_on_task() function returns the number of seconds worked on the
+given task over the given timeframe.  I think this will be useful.
+
+####################
+
+So...when you go to the "live" page, the system will iterate over the top-level
+tasks, calculating the amount of time spent on that task in the current day
+(ie, since midnight).  We then use this to calculate the actual weightings of
+the top-level tasks, which are then compared against the desired weightings to
+see how much of a discrepency there is.
+
+####################
+
+I don't claim that it's perfect, but we have a task chooser now.  So I can
+simply call it and it will return the next task to work on, based on the work
+done so far today and the desired weightings.
+
+So what would a simple UI look like?  I don't want to get too fancy at this
+stage.
+
+    Live your Day
+
+    So far today, you have worked on the following:
+
+        <task.label>  <xx> minutes
+        ...
+
+    (or: You haven't done any work yet today.)
+
+    I suggest that you now spend <task.min_time> minutes working on
+    <task.label>.
+
+    [Start]   [Finished]
+
+When the user clicks on "Start", the window changes to something like:
+
+    Live your Day
+
+    You are currently working on <task.label>.
+
+    You should spend a minimum of <task.min_time> minutes, and no more than
+    <task.max_time> minutes, working on this task.
+
+    [I've Finished]   [Cancel]
+
+This is deliberately simple, with no countdown timers or other fancy
+Javascript.  We simply keep track (in a hidden form variable) of the start
+time, and then record the activity when the user clicks on "I've Finished".
+Cancel aborts the activity without recording anything.
+

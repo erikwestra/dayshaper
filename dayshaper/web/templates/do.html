@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Dayshaper</title>
+    <link href="{{ STATIC_URL }}css/editor.css"
+          rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <p/>
+    <div style="margin-left: 30px">
+      <h3>Dayshaper: Doing</h3>
+      You are currently working on <b>{{ suggested_task.label }}</b>
+{% if suggested_task.description %}
+      &nbsp;({{ suggested_task.description }})
+{% endif %}
+      .
+      <p/>
+      You should spend {{ suggested_time }} working on this task.
+
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="start_time" value="{{ start_time }}"/>
+        &nbsp;&nbsp;
+        <input type="submit" name="finished" value="I've Finished"/>
+        &nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Cancel"/>
+      </form>
+    </div>
+  </body>
+</html>

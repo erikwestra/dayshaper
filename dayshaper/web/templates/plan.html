@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <title>Dayshaper</title>
+    <link href="{{ STATIC_URL }}css/editor.css"
+          rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <p/>
+    <div style="margin-left: 30px">
+      <h3>Dayshaper: Planning</h3>
+      <h4>{{ heading|safe }}</h4>
+
+      <table style="margin-left: 20px"
+             border="0" cellspacing="0" cellpadding="5">
+        <tr>
+          <td class="heading border-b">
+            Task
+          </td>
+          <td class="heading border-b">
+            Weighting
+          </td>
+          <td class="heading border-b">&nbsp;</td>
+          <td class="heading border-b">&nbsp;</td>
+          <td class="heading border-b">&nbsp;</td>
+        </tr>
+{% for task in tasks %}
+        <tr class="{% cycle 'odd' 'even' %}">
+          <td class="body border-lb left" nowrap>
+  {% if task.has_children %}
+            <img src="{{ STATIC_URL }}images/task-icon-children.png"/>
+  {% else %}
+            <img src="{{ STATIC_URL }}images/task-icon-no-children.png"/>
+  {% endif %}
+            {{ task.label }}
+          </td>
+          <td class="body border-b centre" nowrap>
+            {{ task.weighting }}
+          </td>
+          <td class="body border-b" nowrap>
+            <button onclick="document.location='{{edit_url }}/{{ task.id }}'">
+              Edit
+            </button>
+          </td>
+          <td class="body border-b" nowrap>
+            <button onclick="document.location='{{children_url }}/{{ task.id }}'">
+              Children
+            </button>
+          </td>
+          <td class="body border-rb" nowrap>
+            <button onclick="document.location='{{delete_url }}/{{ task.id }}'">
+              Delete
+            </button>
+          </td>
+        </tr>
+{% endfor %}
+{% if not tasks %}
+        <tr>
+          <td colspan="5">
+            There are no tasks at this level.
+          </td>
+        </tr>
+{% endif %}
+        <tr>
+          <td colspan="5">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%">
+              <tr>
+                <td align="left">
+                  <button onclick="document.location='{{ add_url }}'">
+                    Add Task
+                  </button>
+                  &nbsp;&nbsp;
+                </td>
+                <td align="center">
+{% if up_url != None %}
+                  <button onclick="document.location='{{ up_url }}'">
+                    Up
+                  </button>
+{% endif %}
+                </td>
+                <td align="right">
+                  &nbsp;&nbsp;
+                  <button onclick="document.location='{{ done_url }}'">
+                    Finished
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
