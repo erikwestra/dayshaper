@@ -1,8 +1,17 @@
 <html>
   <head>
     <title>Dayshaper</title>
-    <link href="{{ STATIC_URL }}css/editor.css"
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jplayer.min.js"></script>
+    <link href="{{ STATIC_URL }}css/table_styles.css"
           rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+      div#timer {
+        font-size: 48pt;
+        color: #d0e0f0;
+        margin-left: 100px;
+      }
+    </style>
   </head>
   <body>
     <p/>
@@ -16,14 +25,129 @@
       <p/>
       You should spend {{ suggested_time }} working on this task.
 
+      <div id="timer"></div>
+
+      <p/>
+
       <form method="POST">
         {% csrf_token %}
         <input type="hidden" name="start_time" value="{{ start_time }}"/>
+        <input type="hidden" name="button_clicked" id="button_clicked"
+               value=""/>
         &nbsp;&nbsp;
-        <input type="submit" name="finished" value="I've Finished"/>
+        <input type="submit" name="finished" value="I've Finished"
+               onclick="on_finished(); return false;"/>
         &nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Cancel"/>
+        <input type="submit" name="cancel" value="Cancel"
+               onclick="on_cancelled(); return false;"/>
       </form>
+      <div id="jquery_jplayer"></div>
     </div>
+    <script type="text/javascript">
+
+      function update_timer(time) {
+        // Update our "timer" div to show the current time value.
+        //
+        //     'time' is the current time value, in seconds.
+          var hours   = Math.floor(time / 3600);
+          var minutes = Math.floor((time - hours * 3600) / 60);
+          var seconds = time - hours * 3600 - minutes * 60;
+
+          var sHours;
+          var sMinutes;
+          var sSeconds;
+
+          sHours = hours.toString();
+
+          if (minutes < 10) {
+            sMinutes = "0" + minutes.toString();
+          } else {
+            sMinutes = minutes.toString();
+          }
+
+          if (seconds < 10) {
+            sSeconds = "0" + seconds.toString();
+          } else {
+            sSeconds = seconds.toString();
+          }
+
+          var sTime;
+          if (hours > 0) {
+            sTime = sHours + ":" + sMinutes + ":" + sSeconds;
+          } else {
+            sTime = sMinutes + ":" + sSeconds;
+          }
+
+          $("div#timer").text(sTime);
+      }
+
+      function play_sound(sound_file, on_done) {
+        // Play the given sound file.
+        //
+        // The parameters are as follows:
+        //
+        //     'sound_file'
+        //
+        //         The name of an MP3 file in our assets/audio directory.
+        //
+        //     'on_done'
+        //
+        //         A function to call when the sound has finished playing, or
+        //         'null' if we should do nothing.
+
+        var player = $("div#jquery_jplayer");
+        player.jPlayer("setMedia",
+                       {mp3: "{{ STATIC_URL }}audio/" + sound_file});
+        if (on_done != null) {
+          player.bind($.jPlayer.event.ended, function(e) {
+              on_done();
+          });
+        }
+        player.jPlayer("play");
+      }
+
+      function on_finished() {
+        // Respond to the user clicking on our "Finished" button.
+
+        play_sound("finished.mp3", function() {
+            $("#button_clicked").val("finished");
+            $("form").submit();
+        });
+      }
+
+      function on_cancelled() {
+        // Respond to the user clicking on our "Cancel" button.
+
+        play_sound("cancel.mp3", function() {
+            $("#button_clicked").val("cancel");
+            $("form").submit();
+        });
+      }
+
+      $(document).ready(function() {
+        // When the page loads, start the count-up timer right away.
+
+        var time = 0;
+        update_timer(time);
+
+        var timer = setInterval(function() {
+          time = time + 1;
+          update_timer(time);
+          if (time == {{ beep_time }}) {
+            play_sound("time-is-up.mp3", null);
+          }
+        }, 1000);
+
+        // Setup our audio player.
+
+        $("div#jquery_jplayer").jPlayer({
+          ready: function() {
+            play_sound("start.mp3");
+          },
+          swfPath: "{{ STATIC_URL }}js/jplayer.swf",
+          supplied: "mp3",
+        });
+      });
+    </script>
   </body>
 </html>

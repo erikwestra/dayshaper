@@ -29,19 +29,6 @@ def start_of_day():
 
 #############################################################################
 
-def start_of_week():
-    """ Return the start of the current week.
-
-        We return a datetime.datetime object representing "midnight on the most
-        recent Monday".
-    """
-    timestamp = start_of_day()
-    while timestamp.date().weekday() != 0:
-        timestamp = timestamp - datetime.timedelta(days=1)
-    return timestamp
-
-#############################################################################
-
 def datetime_to_seconds(dt):
     """ Convert a datetime.datetime object into an integer number of seconds.
     """
@@ -58,6 +45,32 @@ def seconds_to_datetime(secs):
     delta = datetime.timedelta(seconds=secs)
     timestamp = epoch + delta
     return timestamp
+
+#############################################################################
+
+def seconds_to_hms(seconds):
+    """ Convert the given number of seconds to an "hour:minute:second" string.
+    """
+    hours = seconds / 3600
+    seconds = seconds - 3600 * hours
+
+    minutes = seconds / 60
+    seconds = seconds - 60 * minutes
+
+    parts = []
+    parts.append(str(hours))
+
+    if minutes < 10:
+        parts.append("0" + str(minutes))
+    else:
+        parts.append(str(minutes))
+
+    if seconds < 10:
+        parts.append("0" + str(seconds))
+    else:
+        parts.append(str(seconds))
+
+    return ":".join(parts)
 
 #############################################################################
 

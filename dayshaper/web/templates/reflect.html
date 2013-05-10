@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Dayshaper</title>
+    <link href="{{ STATIC_URL }}css/table_styles.css"
+          rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <p/>
+    <div style="margin-left: 30px">
+      <h3>Dayshaper: Reflecting</h3>
+      Over the past seven days, you have done the following:
+
+      <table style="margin-left: 20px; border-collapse: collapse"
+             border="0" cellspacing="0" cellpadding="5">
+{% for row in table %}
+        <tr>
+  {% for cell in row %}
+          <td class="{{ cell.style }}" nowrap>
+            {{ cell.text|safe }}
+          </td>
+  {% endfor %}
+        </tr>
+{% endfor %}
+      </table>
+      <p/>
+      &nbsp;&nbsp;
+      <button onclick="document.location='/'">
+        Done
+      </button>
+    </div>
+  </body>
+</html>

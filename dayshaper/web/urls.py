@@ -8,15 +8,18 @@ from django.conf.urls import *
 
 urlpatterns = []
 urlpatterns += patterns('dayshaper.web.views',
-    (r'^$',                              'main.main'),
-    (r'^plan/$',                         'plan.list'),
-    (r'^plan/(?P<parent_id>\d+)/$',      'plan.list'),
-    (r'^plan/add/$',                     'plan.add'),
-    (r'^plan/add/(?P<parent_id>\d+)/$',  'plan.add'),
-    (r'^plan/edit/(?P<task_id>\d+)/$',   'plan.edit'),
-    (r'^plan/delete/(?P<task_id>\d+)/$', 'plan.delete'),
-    (r'^do/$',                           'do.suggest_task'),
-    (r'^do/(?P<task_id>\d+)/$',          'do.do_task'),
-    (r'^reflect/$',                      'reflect.reflect'),
+    (r'^$',                     'main.main'),
+    (r'^plan/$',                'plan.plan'),
+    (r'^plan/list/$',           'plan.list'),
+    (r'^plan/load/$',           'plan.load'),
+    (r'^plan/save/$',           'plan.save'),
+    (r'^plan/add_sibling/$',    'plan.add_sibling'),
+    (r'^plan/add_child/$',      'plan.add_child'),
+    (r'^plan/delete/$',         'plan.delete'),
+    (r'^plan/move/$',           'plan.move'),
+    (r'^do/$',                  'suggest.suggest'),
+    (r'^do/(?P<task_id>\d+)/$', 'do.do'),
+    (r'^reflect/$',             'reflect.reflect'),
+    (r'^prefs/$',               'prefs.prefs'),
 )
 

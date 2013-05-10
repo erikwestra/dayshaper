@@ -1,13 +1,28 @@
 <html>
   <head>
     <title>Dayshaper</title>
-    <link href="{{ STATIC_URL }}css/editor.css"
+    <link href="{{ STATIC_URL }}css/table_styles.css"
           rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+      hr.grey {
+        border:0;
+        background-color:#aaa;
+        height:1px;
+      }
+    </style>
   </head>
   <body>
     <p/>
     <div style="margin-left: 30px">
       <h3>Dayshaper: Doing</h3>
+{% if recent_task %}
+      You've just finished working on {{ recent_task.label }}
+      for {{ recent_task.time_spent }}.
+  {% if recent_task.did_minimum %}
+      Congratulations!
+  {% endif %}
+      <hr class="grey"/>
+{% endif %}
 {% if task_table %}
       So far today, you have worked on the following:
       <p/>
@@ -30,16 +45,15 @@
 {% else %}
       You haven't done any work yet today.
 {% endif %}
-      <p/>
+      <hr class="grey"/>
+{% if suggested_task %}
       I suggest that you now spend 
-{% if suggested_task.min_time == 1 %}
+  {% if suggested_task.min_time == 1 %}
       1 minute
-{% else %}
+  {% else %}
       {{ suggested_task.min_time }} minutes
-{% endif %}
-      working on <b>{{ suggested_task.label }}</b>
-{% if suggested_task.description %}&nbsp;({{ suggested_task.description }}).
-{% else %}.{% endif %}
+  {% endif %}
+      working on <b>{{ suggested_task.label }}</b>{% if suggested_task.description %}&nbsp;({{ suggested_task.description }}).{% else %}.{% endif %}
       <p/>
       &nbsp;&nbsp;
       <button onclick="document.location='{{ start_url }}'">
@@ -49,6 +63,14 @@
       <button onclick="document.location='{{ finished_url }}'">
         Finished
       </button>
+{% else %}
+      There aren't any more tasks you can work on right now!
+      <p/>
+      &nbsp;&nbsp;
+      <button onclick="document.location='{{ finished_url }}'">
+        OK
+      </button>
+{% endif %}
     </div>
   </body>
 </html>

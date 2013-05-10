@@ -15,5 +15,6 @@ def main(request):
                   {'plan_url'    : "/plan",
                    'do_url'      : "/do",
                    'reflect_url' : "/reflect",
+                   'prefs_url'   : "/prefs",
                   })
 

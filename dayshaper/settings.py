@@ -37,10 +37,10 @@ MEDIA_URL = ''
 
 STATIC_ROOT = ''
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/'
 
 STATICFILES_DIRS = (
-    (os.path.join(ROOT_DIR, "dayshaper", "static")),
+    (os.path.join(ROOT_DIR, "dayshaper", "assets")),
 )
 
 SERVE_STATIC_MEDIA = True

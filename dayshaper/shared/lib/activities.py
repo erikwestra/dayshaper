@@ -105,15 +105,15 @@ def tasks_worked_on(start_time, end_time):
 
 #############################################################################
 
-def latest_activity(task):
+def latest_activity_for_task(task):
     """ Return the date and time at which we last worked on the given task.
 
         If the task has never been worked on, we return None.
     """
     latest = None
     for activity in Activity.objects.filter(task=task):
-        if latest == None or latest < activity.ended_at:
-            latest = activity.ended_at
+        if latest == None or latest < activity.started_at:
+            latest = activity.started_at
     return latest
 
 #############################################################################
@@ -251,4 +251,38 @@ def calc_task_summary(start_time, end_time):
 
     return {'summary'  : summary_tree,
             'tot_time' : tot_time}
+
+#############################################################################
+
+def latest_activity():
+    """ Return the latest activity done by the user.
+
+        We return a dictionary with the following entries:
+
+            'task'
+
+                The Task object most recently worked on, or None if no tasks
+                have been worked on.
+
+            'ended_at'
+
+                A datetime.datetime object representing the date and time at
+                which the user finished working on this task.
+
+            'time_spent'
+
+                The amount of time the user spent working on this task, in
+                seconds.
+    """
+    try:
+        activity = Activity.objects.latest("ended_at")
+    except Activity.DoesNotExist:
+        return {'task'       : None,
+                'ended_at'   : None,
+                'time_spent' : 0}
+
+    time_spent = activity.ended_at - activity.started_at
+    return {'task'       : activity.task,
+            'ended_at'   : activity.ended_at,
+            'time_spent' : int(time_spent.total_seconds())}
 

@@ -3,3 +3,4 @@ South==0.7.6
 distribute==0.6.34
 psycopg2==2.5
 wsgiref==0.1.2
+simplejson==2.6.2

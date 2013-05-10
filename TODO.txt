@@ -1,32 +1,62 @@
 Things to Do on Dayshaper
 -------------------------
 
- - Add support for disabling a task for a given period of time.
- - Implement "Reflect" mode.
- - Add JQuery to static assets.
- - Add timer to "doing" page.
- - Fix chooser so it handles slower-than-daily tasks.
- - Refactor views so each view function has just one view.
+ - Remove "Preferences" button and page.
+ - Store Dayshaper source on my private Github account. 
+ - If no task is selected when the user clicks on the "Add Task" button, add a
+   new top-level task.
+ - Disable the "Add Sub-Task" button if there is no task selected.
+ - Only show the strategy field if a task has children.
+ - Only show the weighting field if a task's parent has a strategy of
+   "proportional".
+ - Only show the min_time and max_time fields in a task doesn't have children.
+ - Add support for disabling a task for a given period of time.  This requires
+   me to have a "make_active_at" field for the task.
+ - Add a "Pause" button to the "doing" page for when I'm interrupted.
+ - Implement the "First Unfinished" task chooser.
+ - Implement the "Random" task chooser.
+
+Future Possibilities:
+---------------------
+
  - Allow me to add a "note" to the task when I'm finishing it, to remind myself
    of something to do next time.
  - In the various summaries, show how often each task was done ("once",
    "twice", "3 times", etc), as well as the total amount of time spent on that
    task.
+ - Add an option to the "suggest" page: "Sorry, I need to work on <X> instead",
+   where "X" is a drop-down menu of all enabled and unfinished tasks.  Or
+   similar -- maybe an option to temporarily disable an item?
+ - Allow program to run for multiple users?
 
 Completed:
 ----------
 
  + Add "minutes" to the min/max times on the "Doing" page.
  + Rename heading on "Doing" page.
+ + Change "static" to "assets".
+ + Add JQuery to static assets.
+ + Add timer to "doing" page.
+ + Can I have the "doing" page beep when the time is up?
+ + Fix chooser so it handles slower-than-daily tasks.
+ + Refactor views so each view function has just one view.
+ + Change "reflect" mode to use last 7 days, rather than starting always on a
+   Monday.
+ + Add a sound that is played when a task is started, and when a task is
+   cancelled.
+ + In the "Suggest" page, show the most recent activity if it was finished in
+   the last hour, along with options to "This task is finished" and "Don't work
+   on this task again today."
+ + Consider adding different "strategies" for choosing the next task.  The
+   current scheme could be called the "proportional" scheme, as it tries to
+   ensure you work on tasks according to their weighting.  Alternative
+   strategies might be: round-robin (working strictly in order), "in order"
+   (always choose the first unfinished task in the list), and maybe even
+   "random".
+ + Add support for marking a task as "finished".
+ + Change "Plan" UI so that we show child tasks in the "Edit" view.
+ + Option to rearrange items, moving items between lists.
+ + Use a UI library to improve the user experience?
 
 ###########
-
-Reflect mode should list the various tasks we've done, on a daily basis.
-Ideally, it would show all the tasks over the past week, with the total amount
-of time spent on each task over the week, and then a daily breakdown going from
-most recent back in time.
-
-How about the current week?  I'd like to be able to go from the start of the
-week.
-
 
